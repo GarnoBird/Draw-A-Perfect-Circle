@@ -633,30 +633,93 @@
       return;
     }
 
-    // Sample up to 300 edge points evenly
-    const step = Math.max(1, Math.floor(pts.length / 300));
+    // Sample up to 400 edge points evenly
+    const step = Math.max(1, Math.floor(pts.length / 400));
     const sample = pts.filter((_, i) => i % step === 0);
 
-    // Best-fit circle via gradient descent
-    let cx = sample.reduce((s,p) => s + p.x, 0) / sample.length;
-    let cy = sample.reduce((s,p) => s + p.y, 0) / sample.length;
-    for (let iter = 0; iter < 20; iter++) {
-      const radii = sample.map(p => Math.hypot(p.x - cx, p.y - cy));
-      const avgR  = radii.reduce((a,b) => a+b, 0) / radii.length;
-      let dx = 0, dy = 0;
-      for (let i = 0; i < sample.length; i++) {
-        const r = radii[i];
-        if (r < 0.5) continue;
-        const w = (r - avgR) / r;
-        dx += (cx - sample[i].x) * w;
-        dy += (cy - sample[i].y) * w;
-      }
-      cx -= dx / sample.length * 0.5;
-      cy -= dy / sample.length * 0.5;
+    // ── RANSAC-style best circle fit ─────────────────────────
+    // Try multiple candidate centers and pick the one with the most
+    // inlier edge points — this ignores paper edges / background noise.
+    const RANSAC_ITERS = 18;
+    const INLIER_TOL   = 0.15; // point is inlier if radius within ±15% of avgR
+
+    let bestCx = 0, bestCy = 0, bestR = 0, bestInliers = 0;
+
+    // Seed candidates: centroid + random triplets of sample points
+    const seeds = [];
+    // Always try the centroid as one seed
+    seeds.push({
+      cx: sample.reduce((s,p)=>s+p.x,0)/sample.length,
+      cy: sample.reduce((s,p)=>s+p.y,0)/sample.length
+    });
+    // Random triplet seeds
+    for (let t = 0; t < RANSAC_ITERS; t++) {
+      const a = sample[Math.floor(Math.random()*sample.length)];
+      const b = sample[Math.floor(Math.random()*sample.length)];
+      const c = sample[Math.floor(Math.random()*sample.length)];
+      // Circumcenter of triangle abc
+      const ax = b.x-a.x, ay = b.y-a.y;
+      const bx = c.x-a.x, by = c.y-a.y;
+      const D  = 2*(ax*by - ay*bx);
+      if (Math.abs(D) < 1e-6) continue;
+      const ux = (by*(ax*ax+ay*ay) - ay*(bx*bx+by*by)) / D;
+      const uy = (ax*(bx*bx+by*by) - bx*(ax*ax+ay*ay)) / D;
+      seeds.push({ cx: a.x+ux, cy: a.y+uy });
     }
 
-    const radii = sample.map(p => Math.hypot(p.x - cx, p.y - cy));
-    const avgR  = radii.reduce((a,b) => a+b, 0) / radii.length;
+    for (const seed of seeds) {
+      // Gradient descent from this seed
+      let cx = seed.cx, cy = seed.cy;
+      for (let iter = 0; iter < 15; iter++) {
+        const radii = sample.map(p => Math.hypot(p.x-cx, p.y-cy));
+        const avgR  = radii.reduce((a,b)=>a+b,0)/radii.length;
+        let dx=0, dy=0;
+        for (let i=0; i<sample.length; i++) {
+          const r = radii[i]; if (r<0.5) continue;
+          const w = (r-avgR)/r;
+          dx += (cx-sample[i].x)*w;
+          dy += (cy-sample[i].y)*w;
+        }
+        cx -= dx/sample.length*0.5;
+        cy -= dy/sample.length*0.5;
+      }
+      const radii = sample.map(p => Math.hypot(p.x-cx, p.y-cy));
+      const avgR  = radii.reduce((a,b)=>a+b,0)/radii.length;
+      if (avgR < 8 || avgR > SW*0.48) continue;
+      // Count inliers
+      const inliers = radii.filter(r => Math.abs(r-avgR)/avgR < INLIER_TOL).length;
+      if (inliers > bestInliers) {
+        bestInliers = inliers; bestCx = cx; bestCy = cy; bestR = avgR;
+      }
+    }
+
+    // Require at least 30% of sample to be inliers
+    if (bestInliers < sample.length * 0.30 || bestR < 8) {
+      cjSmoothedConfidence *= 0.85;
+      _cjRender();
+      return;
+    }
+
+    // Final pass: refit using only inliers for a cleaner circle
+    const inlierPts = sample.filter(p => {
+      const r = Math.hypot(p.x-bestCx, p.y-bestCy);
+      return Math.abs(r-bestR)/bestR < INLIER_TOL;
+    });
+    let cx = bestCx, cy = bestCy;
+    for (let iter = 0; iter < 10; iter++) {
+      const radii = inlierPts.map(p => Math.hypot(p.x-cx, p.y-cy));
+      const avgR  = radii.reduce((a,b)=>a+b,0)/radii.length;
+      let dx=0, dy=0;
+      for (let i=0; i<inlierPts.length; i++) {
+        const r=radii[i]; if(r<0.5) continue;
+        const w=(r-avgR)/r;
+        dx+=(cx-inlierPts[i].x)*w; dy+=(cy-inlierPts[i].y)*w;
+      }
+      cx-=dx/inlierPts.length*0.5; cy-=dy/inlierPts.length*0.5;
+    }
+
+    const radii = inlierPts.map(p => Math.hypot(p.x-cx, p.y-cy));
+    const avgR  = radii.reduce((a,b)=>a+b,0)/radii.length;
 
     // Reject implausible detections
     if (avgR < 8 || avgR > SW * 0.48) {
@@ -671,7 +734,7 @@
 
     const SECTORS = 16;
     const hit = new Array(SECTORS).fill(false);
-    for (const p of sample) {
+    for (const p of inlierPts) {
       const angle = Math.atan2(p.y - cy, p.x - cx);
       hit[Math.floor(((angle + Math.PI) / (2 * Math.PI)) * SECTORS) % SECTORS] = true;
     }
@@ -679,7 +742,8 @@
 
     const cvConf     = Math.max(0, 1 - cv / 0.35);
     const coverConf  = Math.max(0, (covered - 0.3) / 0.7);
-    const frameConf  = cvConf * 0.5 + coverConf * 0.5;
+    const inlierConf = Math.min(1, (bestInliers / sample.length - 0.3) / 0.4);
+    const frameConf  = cvConf * 0.4 + coverConf * 0.4 + inlierConf * 0.2;
 
     // Raw score this frame
     const circularity = Math.max(0, 1 - cv * 4);
