@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -8,151 +7,238 @@
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
-body {
-background: #0a0a0a;
-color: #e8e8e8;
-font-family: ‘Courier New’, monospace;
-display: flex;
-flex-direction: column;
-align-items: center;
-justify-content: center;
-min-height: 100vh;
-overflow: hidden;
-user-select: none;
-}
+  body {
+    background: #0a0a0a;
+    color: #e8e8e8;
+    font-family: 'Courier New', monospace;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    overflow: hidden;
+    user-select: none;
+  }
 
-h1 {
-font-size: 1.4rem;
-letter-spacing: 0.3em;
-text-transform: uppercase;
-color: #888;
-margin-bottom: 6px;
-font-weight: 400;
-}
+  h1 {
+    font-size: 1.4rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: #888;
+    margin-bottom: 6px;
+    font-weight: 400;
+  }
 
-#subtitle {
-font-size: 0.72rem;
-color: #444;
-letter-spacing: 0.15em;
-margin-bottom: 16px;
-}
+  #subtitle {
+    font-size: 0.72rem;
+    color: #444;
+    letter-spacing: 0.15em;
+    margin-bottom: 16px;
+  }
 
-/* Toggle row */
-#toggles {
-display: flex;
-gap: 14px;
-margin-bottom: 16px;
-}
+  /* Toggle row */
+  #toggles {
+    display: flex;
+    gap: 14px;
+    margin-bottom: 16px;
+  }
 
-.toggle-btn {
-background: none;
-border: 1px solid #2a2a2a;
-color: #444;
-padding: 5px 14px;
-font-family: ‘Courier New’, monospace;
-font-size: 0.68rem;
-letter-spacing: 0.18em;
-text-transform: uppercase;
-cursor: pointer;
-border-radius: 2px;
-transition: all 0.2s;
-}
+  .toggle-btn {
+    background: none;
+    border: 1px solid #2a2a2a;
+    color: #444;
+    padding: 5px 14px;
+    font-family: 'Courier New', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: all 0.2s;
+  }
 
-.toggle-btn.on {
-border-color: #555;
-color: #bbb;
-background: #161616;
-}
+  .toggle-btn.on {
+    border-color: #555;
+    color: #bbb;
+    background: #161616;
+  }
 
-.toggle-btn:hover {
-border-color: #666;
-color: #ccc;
-}
+  .toggle-btn:hover {
+    border-color: #666;
+    color: #ccc;
+  }
 
-/* Canvas */
-#canvas-wrapper {
-position: relative;
-width: 420px;
-height: 420px;
-}
+  /* Canvas */
+  #canvas-wrapper {
+    position: relative;
+    width: 420px;
+    height: 420px;
+  }
 
-canvas {
-border: 1px solid #222;
-border-radius: 4px;
-cursor: crosshair;
-display: block;
-touch-action: none;
-}
+  canvas {
+    border: 1px solid #222;
+    border-radius: 4px;
+    cursor: crosshair;
+    display: block;
+    touch-action: none;
+  }
 
-/* Score */
-#score-display {
-margin-top: 18px;
-text-align: center;
-min-height: 90px;
-}
+  /* Score */
+  #score-display {
+    margin-top: 18px;
+    text-align: center;
+    min-height: 90px;
+  }
 
-#score-number {
-font-size: 3.5rem;
-font-weight: 700;
-color: #fff;
-letter-spacing: -0.02em;
-transition: color 0.3s;
-}
+  #score-number {
+    font-size: 3.5rem;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: -0.02em;
+    transition: color 0.3s;
+  }
 
-#score-label {
-font-size: 0.7rem;
-letter-spacing: 0.25em;
-color: #555;
-text-transform: uppercase;
-margin-top: 2px;
-}
+  #score-label {
+    font-size: 0.7rem;
+    letter-spacing: 0.25em;
+    color: #555;
+    text-transform: uppercase;
+    margin-top: 2px;
+  }
 
-#score-grade {
-font-size: 0.85rem;
-letter-spacing: 0.1em;
-color: #777;
-margin-top: 6px;
-min-height: 1.2em;
-}
+  #score-grade {
+    font-size: 0.85rem;
+    letter-spacing: 0.1em;
+    color: #777;
+    margin-top: 6px;
+    min-height: 1.2em;
+  }
 
-#assist-note {
-font-size: 0.65rem;
-letter-spacing: 0.08em;
-color: #555;
-margin-top: 5px;
-min-height: 1em;
-font-style: italic;
-}
+  #assist-note {
+    font-size: 0.65rem;
+    letter-spacing: 0.08em;
+    color: #555;
+    margin-top: 5px;
+    min-height: 1em;
+    font-style: italic;
+  }
 
-#instructions {
-font-size: 0.72rem;
-color: #444;
-letter-spacing: 0.08em;
-margin-top: 14px;
-}
+  #instructions {
+    font-size: 0.72rem;
+    color: #444;
+    letter-spacing: 0.08em;
+    margin-top: 14px;
+  }
 
-#btn-retry {
-margin-top: 12px;
-background: none;
-border: 1px solid #333;
-color: #666;
-padding: 8px 28px;
-font-family: ‘Courier New’, monospace;
-font-size: 0.75rem;
-letter-spacing: 0.2em;
-text-transform: uppercase;
-cursor: pointer;
-border-radius: 2px;
-transition: all 0.2s;
-display: none;
-}
+  #btn-retry {
+    margin-top: 12px;
+    background: none;
+    border: 1px solid #333;
+    color: #666;
+    padding: 8px 28px;
+    font-family: 'Courier New', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: all 0.2s;
+    display: none;
+  }
 
-#btn-retry:hover {
-border-color: #888;
-color: #ccc;
-}
+  #btn-retry:hover {
+    border-color: #888;
+    color: #ccc;
+  }
+
+  /* CircleJerk */
+  #btn-cj {
+    background: none;
+    border: 1px solid #3a1a1a;
+    color: #a04040;
+    padding: 5px 14px;
+    font-family: 'Courier New', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: all 0.2s;
+  }
+  #btn-cj:hover { border-color: #c05050; color: #e06060; }
+
+  #cj-modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.92);
+    z-index: 100;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+  }
+  #cj-modal.open { display: flex; }
+
+  #cj-video {
+    width: 320px;
+    height: 320px;
+    object-fit: cover;
+    border-radius: 4px;
+    border: 1px solid #333;
+  }
+
+  #cj-overlay {
+    position: absolute;
+    pointer-events: none;
+    border-radius: 4px;
+  }
+
+  #cj-wrap {
+    position: relative;
+    width: 320px;
+    height: 320px;
+  }
+
+  #cj-score {
+    font-size: 2.8rem;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: -0.02em;
+    min-height: 3.5rem;
+    text-align: center;
+  }
+
+  #cj-grade {
+    font-size: 0.85rem;
+    letter-spacing: 0.1em;
+    color: #777;
+    text-align: center;
+    min-height: 1.2em;
+  }
+
+  #cj-hint {
+    font-size: 0.68rem;
+    color: #444;
+    letter-spacing: 0.1em;
+    text-align: center;
+  }
+
+  #btn-cj-close {
+    background: none;
+    border: 1px solid #333;
+    color: #666;
+    padding: 7px 24px;
+    font-family: 'Courier New', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: all 0.2s;
+  }
+  #btn-cj-close:hover { border-color: #888; color: #ccc; }
 </style>
-
 </head>
 <body>
 
@@ -162,6 +248,19 @@ color: #ccc;
 <div id="toggles">
   <button class="toggle-btn on" id="btn-grid">⊞ Grid: On</button>
   <button class="toggle-btn" id="btn-outline">◎ Outline: Off</button>
+  <button id="btn-cj">⦿ CircleJerk</button>
+</div>
+
+<!-- CircleJerk Modal -->
+<div id="cj-modal">
+  <div id="cj-wrap">
+    <video id="cj-video" autoplay playsinline muted></video>
+    <canvas id="cj-overlay"></canvas>
+  </div>
+  <div id="cj-score">—</div>
+  <div id="cj-grade"></div>
+  <div id="cj-hint">Point camera at a hand-drawn circle</div>
+  <button id="btn-cj-close">✕ Close</button>
 </div>
 
 <div id="canvas-wrapper">
@@ -409,8 +508,8 @@ color: #ccc;
 
     ctx.beginPath();
     ctx.arc(cx, cy, avgR, 0, Math.PI * 2);
-    ctx.strokeStyle = 'rgba(255,255,255,0.1)';
-    ctx.lineWidth = 1;
+    ctx.strokeStyle = 'rgba(255,255,255,0.35)';
+    ctx.lineWidth = 1.5;
     ctx.setLineDash([4, 6]);
     ctx.stroke();
     ctx.setLineDash([]);
@@ -430,7 +529,160 @@ color: #ccc;
 
   // Init
   renderBackground();
-</script>
 
+  // ─── CircleJerk ────────────────────────────────────────────
+  const cjModal   = document.getElementById('cj-modal');
+  const cjVideo   = document.getElementById('cj-video');
+  const cjOverlay = document.getElementById('cj-overlay');
+  const cjScore   = document.getElementById('cj-score');
+  const cjGrade   = document.getElementById('cj-grade');
+  const btnCjClose = document.getElementById('btn-cj-close');
+  const cjCtx     = cjOverlay.getContext('2d');
+  let cjStream    = null;
+  let cjRAF       = null;
+
+  document.getElementById('btn-cj').addEventListener('click', async () => {
+    cjModal.classList.add('open');
+    cjScore.textContent = '—';
+    cjScore.style.color = '#fff';
+    cjGrade.textContent = '';
+    try {
+      cjStream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: 'environment', width: 640, height: 640 }
+      });
+      cjVideo.srcObject = cjStream;
+      cjVideo.onloadedmetadata = () => {
+        cjOverlay.width  = cjVideo.videoWidth  || 320;
+        cjOverlay.height = cjVideo.videoHeight || 320;
+        cjOverlay.style.width  = '320px';
+        cjOverlay.style.height = '320px';
+        cjOverlay.style.position = 'absolute';
+        cjOverlay.style.top = '0';
+        cjOverlay.style.left = '0';
+        cjLoop();
+      };
+    } catch(err) {
+      cjGrade.textContent = 'Camera access denied';
+    }
+  });
+
+  btnCjClose.addEventListener('click', () => {
+    cjModal.classList.remove('open');
+    if (cjStream) { cjStream.getTracks().forEach(t => t.stop()); cjStream = null; }
+    if (cjRAF) { cancelAnimationFrame(cjRAF); cjRAF = null; }
+  });
+
+  function cjLoop() {
+    cjRAF = requestAnimationFrame(cjLoop);
+    const vw = cjOverlay.width, vh = cjOverlay.height;
+
+    // Grab frame into offscreen canvas
+    const off = document.createElement('canvas');
+    off.width = vw; off.height = vh;
+    const octx = off.getContext('2d');
+    octx.drawImage(cjVideo, 0, 0, vw, vh);
+    const frame = octx.getImageData(0, 0, vw, vh);
+
+    // Greyscale + simple edge detect (Sobel-lite)
+    const grey = new Uint8Array(vw * vh);
+    const d = frame.data;
+    for (let i = 0; i < vw * vh; i++) {
+      grey[i] = (d[i*4]*77 + d[i*4+1]*150 + d[i*4+2]*29) >> 8;
+    }
+
+    const edge = new Uint8Array(vw * vh);
+    const thresh = 30;
+    for (let y = 1; y < vh - 1; y++) {
+      for (let x = 1; x < vw - 1; x++) {
+        const i = y * vw + x;
+        const gx = -grey[i-vw-1] + grey[i-vw+1] - 2*grey[i-1] + 2*grey[i+1] - grey[i+vw-1] + grey[i+vw+1];
+        const gy = -grey[i-vw-1] - 2*grey[i-vw] - grey[i-vw+1] + grey[i+vw-1] + 2*grey[i+vw] + grey[i+vw+1];
+        edge[i] = (Math.abs(gx) + Math.abs(gy)) > thresh ? 255 : 0;
+      }
+    }
+
+    // Collect edge points
+    const pts = [];
+    for (let y = 0; y < vh; y++) {
+      for (let x = 0; x < vw; x++) {
+        if (edge[y * vw + x] > 0) pts.push({x, y});
+      }
+    }
+
+    cjCtx.clearRect(0, 0, vw, vh);
+
+    if (pts.length < 40) {
+      cjScore.textContent = '—';
+      cjGrade.textContent = '';
+      return;
+    }
+
+    // Sample up to 300 edge points for speed
+    const sample = pts.length > 300
+      ? pts.filter((_, i) => i % Math.floor(pts.length / 300) === 0)
+      : pts;
+
+    // Best-fit circle center via gradient descent (same as draw mode)
+    let cx = sample.reduce((s,p) => s + p.x, 0) / sample.length;
+    let cy = sample.reduce((s,p) => s + p.y, 0) / sample.length;
+    for (let iter = 0; iter < 15; iter++) {
+      const radii = sample.map(p => Math.hypot(p.x - cx, p.y - cy));
+      const avgR  = radii.reduce((a,b) => a+b, 0) / radii.length;
+      let dx = 0, dy = 0;
+      for (let i = 0; i < sample.length; i++) {
+        const r = radii[i];
+        if (r < 0.5) continue;
+        const w = (r - avgR) / r;
+        dx += (cx - sample[i].x) * w;
+        dy += (cy - sample[i].y) * w;
+      }
+      cx -= dx / sample.length;
+      cy -= dy / sample.length;
+    }
+
+    const radii = sample.map(p => Math.hypot(p.x - cx, p.y - cy));
+    const avgR  = radii.reduce((a,b) => a+b, 0) / radii.length;
+
+    // Reject if circle is implausibly small or the center is off-frame
+    if (avgR < 20 || cx < 0 || cy < 0 || cx > vw || cy > vh) {
+      cjScore.textContent = '—';
+      cjGrade.textContent = '';
+      return;
+    }
+
+    // Score: same circularity formula as draw mode
+    const variance = radii.reduce((s,r) => s + (r - avgR)**2, 0) / radii.length;
+    const cv = Math.sqrt(variance) / avgR;
+    const circularity = Math.max(0, 1 - cv * 4);
+    const score = Math.min(100, Math.round(Math.pow(circularity, 1.3) * 100));
+
+    const grade = getGrade(score);
+    cjScore.textContent = score + '%';
+    cjScore.style.color  = grade.color;
+    cjGrade.textContent  = grade.text;
+    cjGrade.style.color  = grade.color;
+
+    // Draw detected circle on overlay
+    // Scale overlay coords to display size (320px)
+    const scaleX = 320 / vw, scaleY = 320 / vh;
+    cjCtx.save();
+    cjCtx.scale(scaleX, scaleY);
+    cjCtx.beginPath();
+    cjCtx.arc(cx, cy, avgR, 0, Math.PI * 2);
+    cjCtx.strokeStyle = grade.color;
+    cjCtx.lineWidth = 2 / scaleX;
+    cjCtx.setLineDash([6, 8]);
+    cjCtx.globalAlpha = 0.7;
+    cjCtx.stroke();
+    cjCtx.setLineDash([]);
+    // Center dot
+    cjCtx.beginPath();
+    cjCtx.arc(cx, cy, 4 / scaleX, 0, Math.PI * 2);
+    cjCtx.fillStyle = grade.color;
+    cjCtx.globalAlpha = 0.9;
+    cjCtx.fill();
+    cjCtx.restore();
+  }
+</script>
 </body>
 </html>
